@@ -16,7 +16,7 @@ var NodeVersion = Version{
 	Major: 1,
 	Minor: 4,
 	Patch: 0,
-	Meta:  "beta",
+	Meta:  "rc2",
 	Alias: "",
 }
 
