@@ -46,6 +46,6 @@
 
   <data dest="${bundle}/Contents/Resources">
     ${prefix:bundle}/pactus.icns
-  </data -->
+  </data>
 
   </app-bundle>
