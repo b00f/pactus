@@ -5,7 +5,6 @@
     <prefix name="bundle">${env:GUI_BUNDLE}</prefix>
     <destination overwrite="yes">${env:ROOT_DIR}</destination>
     <run-install-name-tool/>
-    <launcher-script>${project}/gtk3-launcher.sh</launcher-script >
     <gtk>gtk+-3.0</gtk>
   </meta>
 
@@ -33,7 +32,7 @@
     ${prefix}/lib/gio/modules/libgiognutls.so
   </binary>
 
-  <translations  name="gtk30">
+  <translations name="gtk30">
     ${prefix}/share/locale
   </translations>
 
@@ -49,4 +48,4 @@
     ${prefix:bundle}/pactus.icns
   </data>
 
-  </app-bundle>
+</app-bundle>
