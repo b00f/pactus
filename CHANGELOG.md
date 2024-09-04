@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.5.0-rc1](https://github.com/pactus-project/pactus/compare/v1.4.0...v1.5.0-rc1) (2024-09-04)
+
+### Feat
+
+- **state**: enable Ed25519 for the Testnet ([#1497](https://github.com/pactus-project/pactus/pull/1497))
+- **gtk**: support create Ed25519 in gtk ([#1489](https://github.com/pactus-project/pactus/pull/1489))
+- **grpc**: add Ed25519 to AddressType proto ([#1492](https://github.com/pactus-project/pactus/pull/1492))
+- **wallet**: upgrade wallet ([#1491](https://github.com/pactus-project/pactus/pull/1491))
+- **wallet**: supporting Ed25519 curve in wallet ([#1484](https://github.com/pactus-project/pactus/pull/1484))
+- **grpc**: add `Proposal` to `ConsensusInfo` API ([#1469](https://github.com/pactus-project/pactus/pull/1469))
+- **crypto**: supporting ed25519 ([#1481](https://github.com/pactus-project/pactus/pull/1481))
+- **gtk**: adding IsPrune to node widget ([#1470](https://github.com/pactus-project/pactus/pull/1470))
+- **daemon**: warn at pruning a prune node attempt ([#1471](https://github.com/pactus-project/pactus/pull/1471))
+- **genesis**: separating chain param from genesis param ([#1463](https://github.com/pactus-project/pactus/pull/1463))
+- **cmd**: pactus-shell support interactive shell ([#1460](https://github.com/pactus-project/pactus/pull/1460))
+
+### Fix
+
+- **store**: cache Ed25519 Public Keys ([#1495](https://github.com/pactus-project/pactus/pull/1495))
+- **grpc**: adding pyi files for python generated files ([#1479](https://github.com/pactus-project/pactus/pull/1479))
+- **grpc**: change enum type to numeric for documentation ([#1474](https://github.com/pactus-project/pactus/pull/1474))
+- **shell**: stop showing usage on error ([#1467](https://github.com/pactus-project/pactus/pull/1467))
+- **util**: chunked download to improve download speed ([#1459](https://github.com/pactus-project/pactus/pull/1459))
+- **gtk**: width size of listbox and download button ([#1434](https://github.com/pactus-project/pactus/pull/1434))
+- **grpc**: add example json-rpc in generated doc ([#1461](https://github.com/pactus-project/pactus/pull/1461))
+- **grpc**: add basic check for grpc configuration to check basic auth ([#1455](https://github.com/pactus-project/pactus/pull/1455))
+- **util**: remove util.Now helper function ([#1442](https://github.com/pactus-project/pactus/pull/1442))
+
+### Refactor
+
+- **types**: using options pattern for memo parameter on new tx functions ([#1443](https://github.com/pactus-project/pactus/pull/1443))
+
 ## [1.4.0](https://github.com/pactus-project/pactus/compare/v1.3.0...v1.4.0) (2024-08-01)
 
 ### Feat
