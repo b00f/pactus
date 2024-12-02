@@ -16,8 +16,8 @@ var NodeVersion = Version{
 	Major: 1,
 	Minor: 6,
 	Patch: 4,
-	Meta:  "beta",
-	Alias: "",
+	Meta:  "rc1",
+	Alias: "Mumbai",
 }
 
 // Version defines the version of Pactus software.
