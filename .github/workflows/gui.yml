@@ -67,7 +67,6 @@ jobs:
           go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62
 
       - name: Build the GUI binary
-        shell: ${{ runner.os == 'Windows' && 'msys2 {0}' || 'bash' }}
         run: make build_gui
 
       - name: Lint check (Linux only)
