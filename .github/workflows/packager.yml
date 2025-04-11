@@ -47,6 +47,8 @@ jobs:
 
       - name: Install build tools and build Python wheel
         run: |
+          ls
+          pwd
           python3 -m pip install build --user
           python3 -m build
         working-directory: python
