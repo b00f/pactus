@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  build-gui:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
