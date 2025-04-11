@@ -39,6 +39,11 @@ jobs:
         name: packages
         path: python/
 
+    - name: debug
+      uses: |
+        pwd
+        ls -la
+
     - name: Set up Python
       uses: actions/setup-python@v5
 
