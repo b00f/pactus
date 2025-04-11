@@ -2,12 +2,9 @@ name: Lint and format check
 
 on:
   push:
-    branches:
-      - main
-
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   linting:
@@ -18,6 +15,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.23.5"
+          cache-dependency-path: go.sum
 
       - name: Checkout code
         uses: actions/checkout@v4
