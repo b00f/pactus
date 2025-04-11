@@ -8,6 +8,7 @@ on:
 jobs:
   packager:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -39,23 +40,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: packages
-          path: python/
-
-      - name: debug
-        uses: |
-          pwd
-          ls -la
+          pattern: python/*
 
       - name: Set up Python
         uses: actions/setup-python@v5
 
-      - name: Install Build Package
-        run: python3 -m pip install build --user
-
-      - name: Build a binary wheel and a source tarball
-        run: python3 -m build
+      - name: Install build tools and build Python wheel
+        run: |
+          python3 -m pip install build --user
+          python3 -m build
+        working-directory: python
 
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: true
+          packages-dir: python
