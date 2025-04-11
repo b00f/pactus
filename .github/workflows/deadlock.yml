@@ -2,8 +2,7 @@ name: Deadlock and data race detection
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   data-race:
