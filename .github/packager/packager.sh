@@ -13,9 +13,8 @@ rm -rf ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}
 
 echo "== Building pactus-grpc package for Python"
-mkdir -p ${PACKAGE_DIR}/python
-cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/python/LICENSE
-cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/python/README.md
 cp -R ${ROOT_DIR}/.github/packager/python ${PACKAGE_DIR}/python
-cp -R ${GEN_DIR}/python/* ${PACKAGE_DIR}/python/pactus_grpc/
+cp ${GEN_DIR}/python/* ${PACKAGE_DIR}/python/pactus_grpc
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/python/
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/python/
 sed -i "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/python/setup.py
