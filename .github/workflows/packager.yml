@@ -45,12 +45,11 @@ jobs:
           name: package-python-grpc
           path: packages/python/pactus-grpc
 
-#      TODO package python jsonrpc
-#      - name: Upload Pactus jsonrpc PyPI package
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: package-python-jsonrpc
-#          path: packages/python/pactus-jsonrpc
+      - name: Upload Pactus jsonrpc PyPI package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-python-jsonrpc
+          path: packages/python/pactus-jsonrpc
 
 
   publish-npm-grpc:
@@ -133,31 +132,30 @@ jobs:
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-#  TODO publish pypi package for jsonrpc
-#  publish-pypi-jsonrpc:
-#    name: Publish pactus-jsonrpc package 📦 to PyPI
-#    needs: packager
-#    runs-on: ubuntu-latest
-#
-#    environment:
-#      name: pypi
-#      url: https://pypi.org/p/pactus-jsonrpc
-#
-#    steps:
-#      - name: Download Python Package
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: package-python-jsonrpc
-#
-#      - name: Set up Python
-#        uses: actions/setup-python@v5
-#        with:
-#          python-version: "3.13"
-#
-#      - name: Install build tools and build Python wheel
-#        run: |
-#          python3 -m pip install build --user
-#          python3 -m build
-#
-#      - name: Publish distribution 📦 to PyPI
-#        uses: pypa/gh-action-pypi-publish@release/v1
+  publish-pypi-jsonrpc:
+    name: Publish pactus-jsonrpc package 📦 to PyPI
+    needs: packager
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pactus-jsonrpc
+
+    steps:
+      - name: Download Python Package
+        uses: actions/download-artifact@v4
+        with:
+          name: package-python-jsonrpc
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install build tools and build Python wheel
+        run: |
+          python3 -m pip install build --user
+          python3 -m build
+
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
