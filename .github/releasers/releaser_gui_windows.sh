@@ -16,7 +16,7 @@ if [ "${ARC}" = "x86_64" ]; then
     INNO_PATH="/c/Program Files (x86)/Inno Setup 6"
 elif [ "${ARC}" = "arm64" ]; then
     FILE_NAME="${PACKAGE_NAME}_windows_arm64"
-    INNO_PATH="/c/Program Files/Inno Setup 6"
+    INNO_PATH="/c/Program Files/Inno Setup"
 else
     echo "Unsupported architecture: ${ARC}"
     exit 1
