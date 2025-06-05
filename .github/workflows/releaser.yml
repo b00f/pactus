@@ -149,7 +149,7 @@ jobs:
         name: [windows-amd64, windows-arm64]
         include:
           - name: windows-amd64
-            runner: windows-2025
+            runner: windows-latest
           - name: windows-arm64
             runner: windows-11-arm
 

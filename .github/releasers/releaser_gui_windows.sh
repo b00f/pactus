@@ -156,7 +156,6 @@ Name:{group}\\Pactus GUI; Filename:{app}\\pactus-gui\\pactus-gui.exe;" >> ${ROOT
 
 cd ${ROOT_DIR}
 
-echo '${INNO_PATH}'
-INNO_DIR=$(cygpath -w -s '${INNO_PATH}')
+INNO_DIR=$(cygpath -w -s "${INNO_PATH}")
 ${INNO_DIR}/ISCC.exe ${ROOT_DIR}/inno.iss
 mv Output/mysetup.exe ${ROOT_DIR}/${FILE_NAME}_installer.exe
