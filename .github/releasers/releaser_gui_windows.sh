@@ -36,70 +36,71 @@ sign_app() {
     local name="$3"
 
     # Check if all parameters are provided
-    if [[ -z "$unsigned_app_path" || -z "$signed_app_path" || -z "$name" ]]; then
+    if [[ -z "${unsigned_app_path}" || -z "${signed_app_path}" || -z "${name}" ]]; then
         echo "Error: Missing parameters. Usage: sign_app_with_signpath <unsigned_app_path> <signed_app_path> <name>"
         return 1
     fi
 
-    # Check if unsigned app exists
-    if [[ ! -f "$unsigned_app_path" ]]; then
+    # Check if unsigned_app_path exists
+    if [[ ! -f "${unsigned_app_path}" ]]; then
         echo "Error: Unsigned app not found at $unsigned_app_path"
         return 1
     fi
 
     # Check if SIGNPATH_PROJECT_SLUG is set
-    if [[ -z "$SIGNPATH_PROJECT_SLUG" ]]; then
+    if [[ -z "${SIGNPATH_PROJECT_SLUG}" ]]; then
         echo "Error: SIGNPATH_PROJECT_SLUG environment variable not set"
         return 1
     fi
 
     # Check if SIGNPATH_ORGANIZATION_ID is set
-    if [[ -z "$SIGNPATH_ORGANIZATION_ID" ]]; then
+    if [[ -z "${SIGNPATH_ORGANIZATION_ID}" ]]; then
         echo "Error: SIGNPATH_ORGANIZATION_ID environment variable not set"
         return 1
     fi
 
     # Check if SIGNPATH_SIGNING_POLICY_SLUG is set
-    if [[ -z "$SIGNPATH_SIGNING_POLICY_SLUG" ]]; then
+    if [[ -z "${SIGNPATH_SIGNING_POLICY_SLUG}" ]]; then
         echo "Error: SIGNPATH_SIGNING_POLICY_SLUG environment variable not set"
         return 1
     fi
 
     # Check if SIGNPATH_API_TOKEN is set
-    if [[ -z "$SIGNPATH_API_TOKEN" ]]; then
+    if [[ -z "${SIGNPATH_API_TOKEN}" ]]; then
         echo "Error: SIGNPATH_API_TOKEN environment variable not set"
         return 1
     fi
 
+    base_url="https://app.signpath.io/API/v1/${SIGNPATH_ORGANIZATION_ID}"
+
     # Submit the signing request
-    echo "Submitting signing request to SignPath..."
+    echo "Submitting signing request to SignPath for ${name}..."
     local submit_response
-    submit_response=$(curl -s -X POST \
-        -H "Authorization: Bearer $SIGNPATH_API_TOKEN" \
-        -F "ProjectSlug=$SIGNPATH_PROJECT_SLUG" \
-        -F "SigningPolicySlug=$SIGNPATH_SIGNING_POLICY_SLUG" \
-        -F "ArtifactConfigurationSlug=v2.4" \
-        -F "Artifact=@$unsigned_app_path" \
-        -F "Description=$name version $version" \
-        -F "Parameters[productVersion]=$version"
-        -F "Parameters[productName]=$name"
-        "https://app.signpath.io/API/v1/$SIGNPATH_ORGANIZATION_ID/SigningRequests")
+    submit_response=$(curl -v -X POST \
+        -H "Authorization: Bearer ${SIGNPATH_API_TOKEN}" \
+        -F "ProjectSlug=${SIGNPATH_PROJECT_SLUG}" \
+        -F "SigningPolicySlug=${SIGNPATH_SIGNING_POLICY_SLUG}" \
+        -F "Artifact=@${unsigned_app_path}" \
+        -F "Description=$name version ${version}" \
+        -F "Parameters[productVersion]=${version}" \
+        -F "Parameters[productName]=${name}" \
+        "${base_url}/SigningRequests")
 
     # Check if submission was successful
     local signing_request_id
-    signing_request_id=$(echo "$submit_response" | jq -r '.SigningRequestId')
-    if [[ -z "$signing_request_id" || "$signing_request_id" == "null" ]]; then
+    signing_request_id=$(echo "${submit_response}" | jq -r '.signingRequestId')
+    if [[ -z "${signing_request_id}" || "${signing_request_id}" == "null" ]]; then
         echo "Error: Failed to submit signing request"
-        echo "Response: $submit_response"
+        echo "Response: ${submit_response}"
         return 1
     fi
 
-    echo "Signing request submitted. ID: $signing_request_id"
+    echo "Signing request submitted. ID: ${signing_request_id}"
 
     # Wait for signing to complete
     local status
     local attempts=0
-    local max_attempts=60  # 5 minutes with 5 second intervals
+    local max_attempts=3
 
     while [[ $attempts -lt $max_attempts ]]; do
         sleep 5
@@ -107,38 +108,39 @@ sign_app() {
 
         echo "Checking signing status (attempt $attempts/$max_attempts)..."
         local status_response
-        status_response=$(curl -s -X GET \
-            -H "Authorization: Bearer $SIGNPATH_API_TOKEN" \
-            "https://app.signpath.io/API/v1/$SIGNPATH_ORGANIZATION_ID/SigningRequests/$signing_request_id")
+        status_response=$(curl -v -X GET \
+            -H "Authorization: Bearer ${SIGNPATH_API_TOKEN}" \
+            "${base_url}/SigningRequests/${signing_request_id}")
 
-        status=$(echo "$status_response" | jq -r '.Status')
+        echo "status_response: ${status_response}"
+        status=$(echo "${status_response}" | jq -r '.status')
 
-        if [[ "$status" == "Failed" ]]; then
+        if [[ "${status}" == "Failed" ]]; then
             echo "Error: Signing failed"
             echo "Status response: $status_response"
             return 1
-        elif [[ "$status" == "Completed" ]]; then
+        elif [[ "${status}" == "Completed" ]]; then
             break
         fi
     done
 
-    if [[ "$status" != "Completed" ]]; then
+    if [[ "${status}" != "Completed" ]]; then
         echo "Error: Signing timed out after $max_attempts attempts"
         return 1
     fi
 
     # Download the signed artifact
     echo "Downloading signed artifact..."
-    if ! curl -s -X GET \
-        -H "Authorization: Bearer $SIGNPATH_TOKEN" \
-        -o "$signed_app_path" \
-        "https://app.signpath.io/API/v1/$SIGNPATH_ORGANIZATION_ID/SigningRequests/$signing_request_id/SignedArtifact"; then
+    if ! curl -v -X GET \
+        -H "Authorization: Bearer ${SIGNPATH_API_TOKEN}" \
+        -o "${signed_app_path}" \
+        "${base_url}/SigningRequests/$signing_request_id/SignedArtifact"; then
         echo "Error: Failed to download signed artifact"
         return 1
     fi
 
     # Verify the signed artifact was downloaded
-    if [[ ! -f "$signed_app_path" ]]; then
+    if [[ ! -f "${signed_app_path}" ]]; then
         echo "Error: Signed artifact was not saved to $signed_app_path"
         return 1
     fi
@@ -161,9 +163,9 @@ CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell_u
 go build -ldflags "-s -w -H windowsgui" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui_unsigned.exe ./cmd/gtk
 
 sign_app ${BUILD_DIR}/pactus-daemon_unsigned.exe  ${BUILD_DIR}/pactus-daemon.exe "Pactus Daemon"
-sign_app ${BUILD_DIR}/pactus-wallet_unsigned.exe  ${BUILD_DIR}/pactus-wallet.exe "Pactus Wallet"
-sign_app ${BUILD_DIR}/pactus-shell_unsigned.exe   ${BUILD_DIR}/pactus-shell.exe  "Pactus Shell"
-sign_app ${BUILD_DIR}/pactus-gui_unsigned.exe     ${BUILD_DIR}/pactus-gui.exe    "Pactus GUI"
+sign_app "${BUILD_DIR}/pactus-wallet_unsigned.exe"  "${BUILD_DIR}/pactus-wallet.exe" "Pactus Wallet"
+sign_app "${BUILD_DIR}/pactus-shell_unsigned.exe"   "${BUILD_DIR}/pactus-shell.exe"  "Pactus Shell"
+sign_app "${BUILD_DIR}/pactus-gui_unsigned.exe"     "${BUILD_DIR}/pactus-gui.exe"    "Pactus GUI"
 
 # Copying the necessary libraries
 echo "Creating GUI directory"
@@ -287,8 +289,6 @@ SetupIconFile=${ROOT_DIR}/.github/releasers/pactus.ico
 LicenseFile=${ROOT_DIR}/LICENSE
 Uninstallable=yes
 UninstallDisplayIcon={app}\\pactus-gui\\pactus-gui.exe
-Compression=lzma2
-SolidCompression=yes
 
 [Files]
 Source:"${PACKAGE_NAME}/*"; DestDir:"{app}"; Flags: recursesubdirs
