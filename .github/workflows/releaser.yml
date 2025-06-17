@@ -165,6 +165,7 @@ jobs:
           msystem: MINGW64
           update: true
           install: git
+            jq
             make
             p7zip
             glib2-devel
@@ -176,6 +177,9 @@ jobs:
 
       - name: Create release files
         run: bash ./.github/releasers/releaser_gui_windows.sh
+        env:
+          SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
+          SIGNPATH_ORGANIZATION_ID: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
 
       - name: Calculate sha256sum
         run: sha256sum pactus-*.zip pactus-*installer.exe > checksum-${{ matrix.name }}.txt
