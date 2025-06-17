@@ -165,7 +165,6 @@ jobs:
           msystem: MINGW64
           update: true
           install: git
-            jq
             make
             p7zip
             glib2-devel
@@ -174,6 +173,7 @@ jobs:
             mingw-w64-x86_64-glib2
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-jq
 
       - name: Create release files
         run: bash ./.github/releasers/releaser_gui_windows.sh
