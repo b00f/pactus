@@ -181,18 +181,24 @@ jobs:
       - name: Sign Pactus Daemon
         uses: ./.github/actions/windows-signing
         with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
             unsigned-path: ./build/pactus-daemon_unsigned.exe
             signed-path: ./build/pactus-daemon.exe
 
       - name: Sign Pactus Wallet
         uses: ./.github/actions/windows-signing
         with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
             unsigned-path: ./build/pactus-wallet_unsigned.exe
             signed-path: ./build/pactus-wallet.exe
 
       - name: Sign Pactus Shell
         uses: ./.github/actions/windows-signing
         with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
             unsigned-path: ./build/pactus-shell_unsigned.exe
             signed-path: ./build/pactus-shell.exe
 
@@ -217,6 +223,8 @@ jobs:
       - name: Sign Installer
         uses: ./.github/actions/windows-signing
         with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
             unsigned-path: ./pactus-gui_${{ steps.get_version.outputs.VERSION }}_${{ matrix.name }}_installer_unsigned.exe
             signed-path: ./pactus-gui_${{ steps.get_version.outputs.VERSION }}_${{ matrix.name }}_installer.exe
 

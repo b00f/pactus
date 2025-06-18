@@ -2,6 +2,14 @@ name: "Signing Windows Artifacts"
 description: "Signing Windows Artifacts"
 
 inputs:
+  signpath-api-token:
+    description: "SignPath API Token"
+    required: true
+
+  signpath-signing-policy-slug:
+    description: "SignPath Signing Policy Slug"
+    required: true
+
   unsigned-path:
     description: "Path to the unsigned artifact"
     required: true
@@ -22,10 +30,10 @@ runs:
     - id: optional_step_id
       uses: signpath/github-action-submit-signing-request@v1.1
       with:
-        api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
-        organization-id: "${{ vars.SIGNPATH_ORGANIZATION_ID }}"
+        api-token: "${{ inputs.signpath-api-token }}"
+        organization-id: "208fe1b4-fd9d-41c8-be2e-8ebd037cd0db"
         project-slug: "pactus"
-        signing-policy-slug: "{{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}"
+        signing-policy-slug: "{{ inputs.signpath-signing-policy-slug }}"
         github-artifact-id: "${{ steps.upload-unsigned-artifact.outputs.artifact-id }}"
         wait-for-completion: true
         output-artifact-directory: "${{ inputs.signed-path }}"
