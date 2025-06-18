@@ -33,7 +33,7 @@ runs:
         api-token: "${{ inputs.signpath-api-token }}"
         organization-id: "208fe1b4-fd9d-41c8-be2e-8ebd037cd0db"
         project-slug: "pactus"
-        signing-policy-slug: "{{ inputs.signpath-signing-policy-slug }}"
+        signing-policy-slug: "${{ inputs.signpath-signing-policy-slug }}"
         github-artifact-id: "${{ steps.upload-unsigned-artifact.outputs.artifact-id }}"
         wait-for-completion: true
         output-artifact-directory: "${{ inputs.signed-path }}"
