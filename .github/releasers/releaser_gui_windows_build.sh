@@ -5,8 +5,6 @@ set -e
 ROOT_DIR="$(pwd)"
 BUILD_DIR="${ROOT_DIR}/build"
 
-mkdir ${PACKAGE_DIR}
-
 # Check the architecture
 ARC="$(uname -m)"
 echo "Building the binaries for Windows ${ARC} architecture"
