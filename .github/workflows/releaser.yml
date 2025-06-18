@@ -147,7 +147,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        name: [windows-amd64, windows-arm64]
+        name: [windows_amd64, windows_arm64]
         include:
           - name: windows_amd64
             runner: windows-latest
