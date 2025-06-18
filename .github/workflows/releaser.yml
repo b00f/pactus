@@ -8,6 +8,7 @@ on:
     tags: ["v*"]
 
 jobs:
+
   ########################################
   build-cli:
     runs-on: ubuntu-latest
@@ -148,9 +149,9 @@ jobs:
       matrix:
         name: [windows-amd64, windows-arm64]
         include:
-          - name: windows-amd64
+          - name: windows_amd64
             runner: windows-latest
-          - name: windows-arm64
+          - name: windows_arm64
             runner: windows-11-arm
 
     defaults:
@@ -175,13 +176,50 @@ jobs:
             mingw-w64-x86_64-pkg-config
             mingw-w64-x86_64-jq
 
-      - name: Create release files
-        run: bash ./.github/releasers/releaser_gui_windows.sh
-        env:
-          SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
-          SIGNPATH_ORGANIZATION_ID: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
-          SIGNPATH_SIGNING_POLICY_SLUG: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
-          SIGNPATH_PROJECT_SLUG: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+      - name: Build Binaries
+        run: bash ./.github/releasers/releaser_gui_windows_build.sh
+
+      - name: Sign Pactus Daemon
+        uses: ./.github/actions/windows-signing
+        with:
+            unsigned-path: ./build/pactus-daemon_unsigned.exe
+            signed-path: ./build/pactus-daemon.exe
+
+      - name: Sign Pactus Wallet
+        uses: ./.github/actions/windows-signing
+        with:
+            unsigned-path: ./build/pactus-wallet_unsigned.exe
+            signed-path: ./build/pactus-wallet.exe
+
+      - name: Sign Pactus Shell
+        uses: ./.github/actions/windows-signing
+        with:
+            unsigned-path: ./build/pactus-shell_unsigned.exe
+            signed-path: ./build/pactus-shell.exe
+
+      - name: Sign Pactus GUI
+        uses: ./.github/actions/windows-signing
+        with:
+            unsigned-path: ./build/pactus-gui_unsigned.exe
+            signed-path: ./build/pactus-gui.exe
+
+      - name: Build Installer
+        run: bash ./.github/releasers/releaser_gui_windows_installer.sh
+
+      - name: Get Version
+        id: get_version
+        run: |
+          VERSION="$(echo `git -C . describe --abbrev=0 --tags` | sed 's/^.//')"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build Installer
+        run: bash ./.github/releasers/releaser_gui_windows_installer.sh
+
+      - name: Sign Installer
+        uses: ./.github/actions/windows-signing
+        with:
+            unsigned-path: ./pactus-gui_${{ steps.get_version.outputs.VERSION }}_${{ matrix.name }}_installer_unsigned.exe
+            signed-path: ./pactus-gui_${{ steps.get_version.outputs.VERSION }}_${{ matrix.name }}_installer.exe
 
       - name: Calculate sha256sum
         run: sha256sum pactus-*.zip pactus-*installer.exe > checksum-${{ matrix.name }}.txt

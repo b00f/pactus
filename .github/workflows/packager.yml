@@ -24,14 +24,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      # `exit 1`: all concurrent actions are canceled and future actions are skipped.
+      # Read more here: https://docs.github.com/en/actions/sharing-automations/creating-actions/setting-exit-codes-for-actions
       - name: Checkout latest release tag
         run: |
           LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo "Latest tag: $LATEST_TAG"
           if [[ ! "$LATEST_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Tag $LATEST_TAG is not a final release tag (vX.Y.Z), skipping."
-            exit 0
+            echo "Tag $LATEST_TAG is not a final release tag (vX.Y.Z)."
+            exit 1
           fi
+
+          echo "Latest tag (Version): $LATEST_TAG"
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
           git checkout $LATEST_TAG
 
       - name: Setup Node.js
@@ -42,6 +46,8 @@ jobs:
 
       - name: Create Packages
         run: bash ./.github/packager/packager.sh
+        env:
+          VERSION: ${{ env.LATEST_TAG }}
 
       - name: Upload `package-js-grpc` package
         uses: actions/upload-artifact@v4
@@ -88,10 +94,10 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      # - name: Publish to npm
-      #   run: npm publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
   publish-npm-jsonrpc:
     name: Publish pactus-jsonrpc package to npm
@@ -114,10 +120,10 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      # - name: Publish to npm
-      #   run: npm publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
   publish-pypi-grpc:
     name: Publish pactus-grpc package to PyPI
@@ -144,8 +150,8 @@ jobs:
           python3 -m pip install build --user
           python3 -m build
 
-      # - name: Publish distribution to PyPI
-        # uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-pypi-jsonrpc:
     name: Publish pactus-jsonrpc package to PyPI
@@ -172,5 +178,5 @@ jobs:
           python3 -m pip install build --user
           python3 -m build
 
-      # - name: Publish distribution to PyPI
-        # uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
