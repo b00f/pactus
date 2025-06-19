@@ -28,7 +28,7 @@ runs:
         path: ${{ inputs.unsigned-path }}
 
     - id: optional_step_id
-      uses: signpath/github-action-submit-signing-request@v1.1
+      uses: signpath/github-action-submit-signing-request@v1.2
       with:
         api-token: "${{ inputs.signpath-api-token }}"
         organization-id: "208fe1b4-fd9d-41c8-be2e-8ebd037cd0db"
