@@ -205,6 +205,8 @@ jobs:
       - name: Sign Pactus GUI
         uses: ./.github/actions/windows-signing
         with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
             unsigned-path: ./build/pactus-gui_unsigned.exe
             signed-path: ./build/pactus-gui.exe
 

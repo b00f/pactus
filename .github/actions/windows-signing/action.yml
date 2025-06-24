@@ -27,7 +27,8 @@ runs:
       with:
         path: ${{ inputs.unsigned-path }}
 
-    - id: optional_step_id
+    - name: sign-artifact
+      id: sign-artifact
       uses: signpath/github-action-submit-signing-request@v1.2
       with:
         api-token: "${{ inputs.signpath-api-token }}"
