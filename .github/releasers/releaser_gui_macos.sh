@@ -34,7 +34,7 @@ cd ${ROOT_DIR}
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon ./cmd/daemon
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet ./cmd/wallet
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell ./cmd/shell
-go build -ldflags "-s -w" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
+CGO_ENABLED=1 go build -ldflags "-s -w" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
 
 
 echo "Installing gtk-mac-bundler"
@@ -51,7 +51,7 @@ chmod +x ${ROOT_DIR}/.github/releasers/macos/gtk3-launcher.sh
 
 make install
 
-export PATH=${PATH}:${HOME}/.bin:${HOME}/local/bin
+export PATH=${PATH}:${HOME}/bin:${HOME}/.bin:${HOME}/local/bin
 BUNDLER=$(which gtk-mac-bundler)
 
 echo "gtk-mac-bundler found at ${BUNDLER}"
@@ -80,10 +80,11 @@ rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 echo "Creating dmg"
 # https://github.com/create-dmg/create-dmg
 
+rm -f "${FILE_NAME}.dmg"
 create-dmg --version
 
 create-dmg --skip-jenkins \
-  --volname "Pactus GUI" \
+  --volname "Pactus" \
   "${FILE_NAME}.dmg" \
   "${ROOT_DIR}/pactus-gui.app"
 

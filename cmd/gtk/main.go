@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -36,38 +37,47 @@ var (
 )
 
 func init() {
+	fmt.Println("1")
 	workingDirOpt = flag.String("working-dir", cmd.PactusDefaultHomeDir(), "working directory path")
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
 
+	fmt.Println("2")
 	if runtime.GOOS == "darwin" {
 		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
 		_ = os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
 	}
 
+	fmt.Println("3")
 	gtk.Init(nil)
 }
 
 func main() {
+	fmt.Println("4")
 	flag.Parse()
 
 	// The gtk should run on main thread.
 	runtime.UnlockOSThread()
 	runtime.LockOSThread()
 
+	fmt.Println("5")
 	// Create a new app.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
 	gtkutil.FatalErrorCheck(err)
 
+	fmt.Println("6")
 	settings, err := gtk.SettingsGetDefault()
 	gtkutil.FatalErrorCheck(err)
 
+	fmt.Println("7")
 	err = settings.Object.Set("gtk-application-prefer-dark-theme", true)
 	gtkutil.FatalErrorCheck(err)
 
+	fmt.Println("8")
 	assets.InitAssets()
 
+	fmt.Println("9")
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
 		terminal.PrintErrorMsgf("Aborted! %v", err)
