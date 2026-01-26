@@ -36,9 +36,9 @@ git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
 cd gtk-mac-bundler
 
 # A workaround to make bundle without building GTK+ using jhbuild.
-# rm bundler/run-install-name-tool-change.sh
-# cp ${ROOT_DIR}/.github/releasers/macos/run-install-name-tool-change.sh bundler/run-install-name-tool-change.sh
-# chmod +x bundler/run-install-name-tool-change.sh
+rm bundler/run-install-name-tool-change.sh
+cp ${ROOT_DIR}/.github/releasers/macos/run-install-name-tool-change.sh bundler/run-install-name-tool-change.sh
+chmod +x bundler/run-install-name-tool-change.sh
 
 # make sure launcher is executable
 chmod +x ${ROOT_DIR}/.github/releasers/macos/gtk3-launcher.sh
