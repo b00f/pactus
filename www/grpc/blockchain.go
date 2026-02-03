@@ -24,35 +24,45 @@ func newBlockchainServer(server *Server) *blockchainServer {
 	}
 }
 
-func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
-	_ *pactus.GetBlockchainInfoRequest,
-) (*pactus.GetBlockchainInfoResponse, error) {
+func (s *blockchainServer) buildCommitteeInfo() ([]*pactus.ValidatorInfo, map[int32]float64, int64) {
 	vals := s.state.CommitteeValidators()
 	valInfos := make([]*pactus.ValidatorInfo, 0, len(vals))
 	for _, val := range vals {
 		valInfos = append(valInfos, s.validatorToProto(val))
 	}
-
-	committeeProtocolVersions := make(map[int32]float64)
+	protocolVersions := make(map[int32]float64)
 	for k, v := range s.state.CommitteeProtocolVersions() {
-		committeeProtocolVersions[int32(k)] = v
+		protocolVersions[int32(k)] = v
 	}
+	committeePower := s.state.Stats().CommitteePower
+	return valInfos, protocolVersions, committeePower
+}
 
+func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
+	_ *pactus.GetBlockchainInfoRequest,
+) (*pactus.GetBlockchainInfoResponse, error) {
 	stats := s.state.Stats()
-
 	return &pactus.GetBlockchainInfoResponse{
-		LastBlockHeight:           stats.LastBlockHeight,
-		LastBlockHash:             stats.LastBlockHash.String(),
-		TotalAccounts:             stats.TotalAccounts,
-		TotalValidators:           stats.TotalValidators,
-		ActiveValidators:          stats.ActiveValidators,
-		TotalPower:                stats.TotalPower,
-		CommitteePower:            stats.CommitteePower,
-		IsPruned:                  stats.IsPruned,
-		PruningHeight:             stats.PruningHeight,
-		LastBlockTime:             stats.LastBlockTime.Unix(),
-		CommitteeValidators:       valInfos,
-		CommitteeProtocolVersions: committeeProtocolVersions,
+		LastBlockHeight:  stats.LastBlockHeight,
+		LastBlockHash:    stats.LastBlockHash.String(),
+		TotalAccounts:    stats.TotalAccounts,
+		TotalValidators:  stats.TotalValidators,
+		ActiveValidators: stats.ActiveValidators,
+		TotalPower:       stats.TotalPower,
+		IsPruned:         stats.IsPruned,
+		PruningHeight:    stats.PruningHeight,
+		LastBlockTime:    stats.LastBlockTime.Unix(),
+	}, nil
+}
+
+func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
+	_ *pactus.GetCommitteeInfoRequest,
+) (*pactus.GetCommitteeInfoResponse, error) {
+	validators, protocolVersions, committeePower := s.buildCommitteeInfo()
+	return &pactus.GetCommitteeInfoResponse{
+		CommitteePower:   committeePower,
+		Validators:       validators,
+		ProtocolVersions: protocolVersions,
 	}, nil
 }
 
