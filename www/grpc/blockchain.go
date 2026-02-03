@@ -35,6 +35,7 @@ func (s *blockchainServer) buildCommitteeInfo() ([]*pactus.ValidatorInfo, map[in
 		protocolVersions[int32(k)] = v
 	}
 	committeePower := s.state.Stats().CommitteePower
+
 	return valInfos, protocolVersions, committeePower
 }
 
@@ -42,6 +43,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	_ *pactus.GetBlockchainInfoRequest,
 ) (*pactus.GetBlockchainInfoResponse, error) {
 	stats := s.state.Stats()
+
 	return &pactus.GetBlockchainInfoResponse{
 		LastBlockHeight:  stats.LastBlockHeight,
 		LastBlockHash:    stats.LastBlockHash.String(),
@@ -59,6 +61,7 @@ func (s *blockchainServer) GetCommitteeInfo(_ context.Context,
 	_ *pactus.GetCommitteeInfoRequest,
 ) (*pactus.GetCommitteeInfoResponse, error) {
 	validators, protocolVersions, committeePower := s.buildCommitteeInfo()
+
 	return &pactus.GetCommitteeInfoResponse{
 		CommitteePower:   committeePower,
 		Validators:       validators,
