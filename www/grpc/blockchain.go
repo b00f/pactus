@@ -34,7 +34,7 @@ func (s *blockchainServer) buildCommitteeInfo() ([]*pactus.ValidatorInfo, map[in
 	for k, v := range s.state.CommitteeProtocolVersions() {
 		protocolVersions[int32(k)] = v
 	}
-	committeePower := s.state.Stats().CommitteePower
+	committeePower := s.state.ChainInfo().CommitteePower
 
 	return valInfos, protocolVersions, committeePower
 }
