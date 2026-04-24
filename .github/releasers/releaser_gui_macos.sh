@@ -36,14 +36,6 @@ CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet 
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell ./cmd/shell
 CGO_ENABLED=1 go build -ldflags "-s -w -extldflags -headerpad_max_install_names" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
 
-if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
-    echo "Signing binaries... ${MACOS_CERT_IDENTITY}"
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
-    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
-fi
-
 echo "Installing gtk-mac-bundler"
 git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
 cd gtk-mac-bundler
@@ -108,6 +100,14 @@ if [ ! -z "${APPLE_ID}" ]; then
     echo "Stapling..."
     xcrun stapler staple "${ROOT_DIR}/pactus-gui.app"
     xcrun stapler staple "${FILE_NAME}.dmg"
+fi
+
+if [ ! -z "${MACOS_CERT_IDENTITY}" ]; then
+    echo "Signing binaries... ${MACOS_CERT_IDENTITY}"
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-daemon
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-wallet
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-shell
+    codesign --force --options runtime --timestamp --sign "${MACOS_CERT_IDENTITY}" ${BUILD_DIR}/pactus-gui
 fi
 
 echo "Creating tar.gz archive"
